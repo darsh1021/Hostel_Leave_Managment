@@ -26,6 +26,10 @@ const FormSchema =new mongoose.Schema({
          type:Number,
         required : true
     },
+    p_email:{
+        type:String,
+        required:true
+    },
     address:{
          type:String,
         required : true
@@ -37,7 +41,8 @@ const FormSchema =new mongoose.Schema({
     application:{
         type:Number,
         default:0
-    }    
+    },
+
 });
 
 const Form =  mongoose.model('Form',FormSchema);

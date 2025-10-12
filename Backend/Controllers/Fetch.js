@@ -7,7 +7,7 @@ const bcrypt = require('bcrypt');
 const saveForm = async(req,res) =>{
         try{
 
-            const{s_name,department,division,r_no,s_phone,p_phone,address,photo_url} = req.body;
+            const{s_name,department,division,r_no,s_phone,p_phone,p_email,address,photo_url,} = req.body;
             console.log(s_name+" "+department+" "+division+" "+r_no+" "+s_phone+" "+p_phone+" "+address+" "+photo_url);
             const form = await Form.findOne({s_phone});
 
@@ -24,8 +24,17 @@ const saveForm = async(req,res) =>{
             const newUser = new User({name,email,password,role});
             newUser.password = await bcrypt.hash(password,10);
             await newUser.save();
+             
+            
+             const newParent = new User({
+                name: "parent",
+                email: p_email,
+                password: await bcrypt.hash(password, 10),
+                role: 'parent'
+                });
+               await newParent.save();
 
-            const formModel = new Form({s_name,department,division,r_no,s_phone,p_phone,address,photo_url});
+            const formModel = new Form({s_name,department,division,r_no,s_phone,p_phone,p_email,address,photo_url});
             await formModel.save();
 
             res.json({
@@ -79,7 +88,9 @@ const fetchStudent = async (req, res) => {
   try {
     const {email} = req.query;
     console.log(email)
-    const student = await Form.findOne({division:email});
+    const student = await Form.findOne({
+  $or: [{ division: email }, { p_email: email }]
+});
 
     if (student) {
       return res.json({

@@ -1,7 +1,7 @@
 import React from "react";
 import "./ReviewModel.css";
 
-const ReviewModel = ({ application, onClose, onAccept, onReject }) => {
+const ReviewModelAdmin = ({ application, onClose, onAccept, onReject }) => {
   if (!application) return null; // no app selected
   
   const formatDate = (dateStr) => {
@@ -14,7 +14,8 @@ const ReviewModel = ({ application, onClose, onAccept, onReject }) => {
         <h2>Review Application</h2>
         <p><strong>Type:</strong> {application.ApplicationType || application.type}</p>
         <p><strong>Title:</strong> {application.reason}</p>
-        <p><strong>Student:</strong> {application.StudentName}</p>
+        <p><strong>Student:</strong> {application.name}</p>
+        <p><strong>Room :</strong> {application.room}</p>
         <p><strong>Start Date:</strong> {formatDate(application.start_Date) || application.date}</p>
         <p><strong>End Date:</strong> {formatDate(application.end_date) || application.date}</p>
         <p><strong>Remarks:</strong> {(application.urgancy)?"Urgant":"Normal"}</p>
@@ -29,4 +30,4 @@ const ReviewModel = ({ application, onClose, onAccept, onReject }) => {
   );
 };
 
-export default ReviewModel;
+export default ReviewModelAdmin;

@@ -3,6 +3,7 @@ const { signupValidation ,loginValidation} = require('../Middlewares/AuthValidat
 const auth = require('../Middlewares/Auth');
 const {saveForm,getAdmin,saveData,StoreNotification} = require('../Controllers/Fetch');
 const {StoreApplication} = require('../Controllers/Storing');
+const {updateApplication} = require('../Controllers/DataOperation');
 
 
 const router = require('express').Router();
@@ -13,4 +14,6 @@ router.post('/saveForm',saveForm);
 router.post('/saveData',saveData);//Rooms
 router.post('/storeNotification',StoreNotification);
 router.post('/storeApplication',StoreApplication);
+router.post('/updateApplication',updateApplication);
+
 module.exports = router;

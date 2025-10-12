@@ -1,11 +1,47 @@
 import React, { useState } from 'react';
 import './ParentUI.css';
+import { useEffect } from 'react';
+import axios from 'axios';
+import ParentReviewModel from './SubComponents/ParentReviewModel';
+
 
 function ParentUI() {
+      
+    const  [parent_email,setParentEmail] = useState("");
+    const [student_name,setStudentName] = useState("");
+      const [selectedApp, setSelectedApp] = useState(null);
+      const email =localStorage.getItem("email");
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+    const [previousApplications , setpreviousApplications] = useState([]);
+    const formatDate = (dateStr) => {
+    if (!dateStr) return "";
+    return new Date(dateStr).toLocaleDateString("en-GB"); // dd/mm/yyyy
+  };
+
+
+        useEffect(()=>{
     
-    // Sample data
-    const previousApplications = [
+        const fetchStudent =  async() =>{
+            const res = await axios.get('http://localhost:5000/Student',{params: { email }});
+            setParentEmail(res.data.data.p_email);
+            setStudentName(res.data.data.s_name);
+        }
+
+        const fetchApplication = async() =>{
+        const res = await axios.get("http://localhost:5000/getApplications", {
+           params: { accept: 1,email:parent_email}
+         });
+         
+         console.log(res.data.data);
+
+         res.data.data.forEach((info,index)=>{const newApp ={id:info._id,type:info.ApplicationType+" [ Approved by Mentor ]",date:formatDate(info.start_Date),reason:info.reason,status:'Approved'};
+         setpreviousApplications([...previousApplications, newApp])});
+        }
+
+        fetchApplication();
+        fetchStudent();
+    },[]);
+   /* const previousApplications = [
         {
             id: 1,
             studentName: 'Rajesh Kumar',
@@ -30,8 +66,20 @@ function ParentUI() {
             status: 'Rejected',
             reason: 'Medical Checkup'
         }
-    ];
+    ];*/
+        const handleAccept = async(app) => {
+     app.accept = 2;
+     app._id= app.id;
+     setSelectedApp(null)
+    setpreviousApplications((prevApps) => prevApps.filter((a) => a._id !== app._id));
+ 
+    return await axios.post("http://localhost:5000/auth/updateApplication",app);
+  };
 
+  const handleReject = (app) => {
+    console.log("Rejected:", app);
+    setSelectedApp(null);
+  };
     const activityData = [
         { date: '2024-01-20', status: 'checked_in', time: '08:30 AM', location: 'Hostel A-105' },
         { date: '2024-01-19', status: 'checked_out', time: '06:00 PM', location: 'Library' },
@@ -82,9 +130,8 @@ function ParentUI() {
                             <span>👨‍🎓</span>
                         </div>
                         <div className="student-details">
-                            <h3>Rajesh Kumar</h3>
-                            <p>Student ID: E2023001</p>
-                            <p>Room: A-105</p>
+                            <h3>Parent : {parent_email}</h3>
+                            <p>{student_name}</p>
                         </div>
                     </div>
                     <div className="parent-status">
@@ -132,8 +179,8 @@ function ParentUI() {
             <div className="parent-content">
                 {/* Previous Applications */}
                 <div className="applications-section">
-                    <div className="section-header">
-                        <h3>Previous Applications</h3>
+                                        <div className="section-header">
+                        <h3>Applications</h3>
                         <button className="view-all-btn">View All</button>
                     </div>
                     <div className="applications-list">
@@ -148,16 +195,20 @@ function ParentUI() {
                                     <span className="app-date">{app.date}</span>
                                 </div>
                                 <div className="app-status">
-                                    <span 
-                                        className="status-badge" 
-                                        style={{ backgroundColor: getStatusColor(app.status) }}
-                                    >
-                                        {app.status}
-                                    </span>
+                                 <button className="btn btn-primary" onClick={() =>{setSelectedApp(app);console.log(app)}}>Review</button>
+                                   <button className="btn btn-secondary">View Details</button>
                                 </div>
                             </div>
                         ))}
                     </div>
+                    {selectedApp && (
+        <ParentReviewModel
+          application={selectedApp}
+          onClose={() => setSelectedApp(null)}
+          onAccept={handleAccept}
+          onReject={handleReject}
+        />
+      )}
                 </div>
 
                 {/* Activity Calendar */}

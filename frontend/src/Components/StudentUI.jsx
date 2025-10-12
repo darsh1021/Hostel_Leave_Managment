@@ -47,10 +47,23 @@ function StudentUI() {
     urgent: false,
     documents: [],
   });
-    useEffect(()=>{
-        const fetchStudent = async()=>{
 
-       
+     const formatDate = (dateStr) => {
+    if (!dateStr) return "";
+    return new Date(dateStr).toLocaleDateString("en-GB"); // dd/mm/yyyy
+  };
+
+    useEffect(()=>{
+
+        const fetchApplication = async() =>{
+        const res = await axios.get("http://localhost:5000/getApplicationsEmail", {
+           params: { accept:1,email:email}
+         });
+
+         res.data.data.forEach((info,index)=>{const newApp ={id:info.length+1,type:info.ApplicationType+" [ Approved by Rector ]",date:formatDate(info.start_Date),reason:info.reason,status:'Approved'};
+         setpreviousApplications([...previousApplications, newApp])});
+        }
+        const fetchStudent = async()=>{
         if (!email) {
         console.error("No email found in localStorage");
         return;
@@ -58,11 +71,12 @@ function StudentUI() {
       else
       {
         const res = await axios.get('http://localhost:5000/Student',{params: { email }});
-        setStudentInfo({name:res.data.data.s_name,department:res.data.data.department,room:res.data.data.r_no,application:res.data.data.application,staus:'Active'})
+        setStudentInfo({name:res.data.data.s_name,department:res.data.data.department,room:res.data.data.r_no,application:res.data.data.application,status:'Active'})
       }
         }
 
         fetchStudent();
+        fetchApplication();
     },[])
     const [activeTab, setActiveTab] = useState('status');
     const [studentInfo, setStudentInfo] = useState({
@@ -73,29 +87,7 @@ function StudentUI() {
         status: 'Active'
     });
 
-    const [previousApplications] = useState([
-        {
-            id: 1,
-            type: 'Leave Application',
-            date: '2024-01-15',
-            status: 'Approved',
-            reason: 'Family Emergency'
-        },
-        {
-            id: 2,
-            type: 'Room Change',
-            date: '2024-01-10',
-            status: 'Pending',
-            reason: 'Roommate Issues'
-        },
-        {
-            id: 3,
-            type: 'Leave Application',
-            date: '2024-01-05',
-            status: 'Rejected',
-            reason: 'Medical Checkup'
-        }
-    ]);
+    const [previousApplications , setpreviousApplications] = useState([]);
 
     const getStatusColor = (status) => {
         switch (status) {

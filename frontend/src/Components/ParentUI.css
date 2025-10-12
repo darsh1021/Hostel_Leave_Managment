@@ -292,6 +292,41 @@
     color: white;
 }
 
+.btn {
+  padding: 10px 20px;
+  border: none;
+  margin:10px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn-primary {
+  background-color: #7b3fe4;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #682ecd;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(123, 63, 228, 0.3);
+}
+
+.btn-secondary {
+  background: linear-gradient(135deg, #a0aec0, #718096);
+  color: white;
+}
+
+.btn-secondary:hover {
+  background: linear-gradient(135deg, #718096, #4a5568);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(160, 174, 192, 0.3);
+}
 /* Activity Calendar */
 .activity-calendar {
     background: #f8fafc;

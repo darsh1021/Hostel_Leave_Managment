@@ -9,7 +9,7 @@ const AddStudent = () => {
 
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
- s_name:"",department:"",division:"",r_no:"",s_phone:"",p_phone:"",address:"",photo_url:""
+ s_name:"",department:"",division:"",r_no:"",s_phone:"",p_phone:"",address:"",photo_url:"",p_email:""
   });
   
   const [roomData,setRoomData] = useState({id:"",status:"",students:[],capacity:"",current:""});
@@ -142,7 +142,22 @@ setFormData({
             />
           </div>
         </div>
-        
+         <div className="form-row">
+          <div className="form-group">
+            <label htmlFor="p_email">Parent Email</label>
+            <input
+              type="email"
+              id="p_email"
+              name="p_email"
+              value={formData.p_email}
+              onChange={(e) => setFormData({
+  ...formData,      
+  p_email: e.target.value
+})}
+              required
+            />
+          </div>
+          </div>
         <div className="form-group">
           <label htmlFor="address">Address</label>
           <input
@@ -157,7 +172,6 @@ setFormData({
             required
           />
         </div>
-        
         <div className="form-group">
           <label htmlFor="photoUrl">Photo URL (Optional)</label>
           <input
