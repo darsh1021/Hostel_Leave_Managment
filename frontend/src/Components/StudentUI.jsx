@@ -11,7 +11,7 @@ function StudentUI() {
     e.preventDefault();
     
      const  ApplicationD = {StudentName:studentInfo.name,Room_no:studentInfo.room,email:email,ApplicationType:formData.applicationType,start_Date:formData.startDate,end_date:formData.endDate,reason:formData.reason,urgancy:formData.urgent,SupportingDoc:""};
-      const res =  await axios.post("http://localhost:5000/auth/storeApplication",ApplicationD);
+      const res =  await axios.post("https://cp-project-5ths.onrender.com/auth/storeApplication",ApplicationD);
       if(res.data.success)
       {
         handleSuccess(res.data.msg);

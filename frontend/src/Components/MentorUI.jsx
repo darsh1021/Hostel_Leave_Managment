@@ -11,7 +11,7 @@ const MentorUI = () => {
     app.accept = 1;
     setSelectedApp(null)
     setApplications((prevApps) => prevApps.filter((a) => a._id !== app._id));
-   await axios.post("http://localhost:5000/auth/updateApplication",app); 
+   await axios.post("https://cp-project-5ths.onrender.com/auth/updateApplication",app); 
   };
 
   const handleReject = (app) => {
@@ -26,7 +26,7 @@ const MentorUI = () => {
   useEffect(() => {
     const getAppl = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/getApplications", {
+        const res = await axios.get("https://cp-project-5ths.onrender.com/getApplications", {
           params: { accept: 0 }
         });
 

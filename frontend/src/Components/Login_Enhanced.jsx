@@ -55,7 +55,7 @@ function Login() {
         const logininfo = { email, password };
 
         try {
-            const url = "http://localhost:5000/auth/login";
+            const url = "https://cp-project-5ths.onrender.com/auth/login";
             const response = await fetch(url, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },

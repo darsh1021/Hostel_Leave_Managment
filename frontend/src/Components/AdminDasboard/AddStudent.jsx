@@ -25,9 +25,9 @@ const AddStudent = () => {
   
     try {
       // Save student form
-      const res1 = await axios.post('http://localhost:5000/auth/saveForm', formData);
+      const res1 = await axios.post('https://cp-project-5ths.onrender.com/auth/saveForm', formData);
       if (res1.data.success) {
-         axios.post('http://localhost:5000/auth/saveData', updatedRoomData);
+         axios.post('https://cp-project-5ths.onrender.com/auth/saveData', updatedRoomData);
         handleSuccess("Student Added Successfully And Room allocated: " + formData.r_no);
       }
     } catch (err) {

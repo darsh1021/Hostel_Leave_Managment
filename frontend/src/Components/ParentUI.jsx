@@ -22,13 +22,13 @@ function ParentUI() {
         useEffect(()=>{
     
         const fetchStudent =  async() =>{
-            const res = await axios.get('http://localhost:5000/Student',{params: { email }});
+            const res = await axios.get('https://cp-project-5ths.onrender.com/Student',{params: { email }});
             setParentEmail(res.data.data.p_email);
             setStudentName(res.data.data.s_name);
         }
 
         const fetchApplication = async() =>{
-        const res = await axios.get("http://localhost:5000/getApplications", {
+        const res = await axios.get("https://cp-project-5ths.onrender.com/getApplications", {
            params: { accept: 1,email:parent_email}
          });
          
@@ -73,7 +73,7 @@ function ParentUI() {
      setSelectedApp(null)
     setpreviousApplications((prevApps) => prevApps.filter((a) => a._id !== app._id));
  
-    return await axios.post("http://localhost:5000/auth/updateApplication",app);
+    return await axios.post("https://cp-project-5ths.onrender.com/auth/updateApplication",app);
   };
 
   const handleReject = (app) => {

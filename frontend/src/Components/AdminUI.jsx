@@ -29,7 +29,7 @@ function AdminUI() {
   };
 
   try {
-    const res = await axios.post("http://localhost:5000/auth/storeQR", data);
+    const res = await axios.post("https://cp-project-5ths.onrender.com/auth/storeQR", data);
     console.log(res.data);
     handleSuccess("QR data stored successfully!");
   } catch (err) {
@@ -70,7 +70,7 @@ function AdminUI() {
       const payload = { ...app, accept: 3 };
 
       // call backend first
-      await axios.post("http://localhost:5000/auth/updateApplication", payload);
+      await axios.post("https://cp-project-5ths.onrender.com/auth/updateApplication", payload);
 
       // remove from applications list if present (match by email/id)
       setApplications(prev => prev.filter(a => !( (a.email || a.s_email) === (app.email || app.s_email) || a._id === app._id || a.id === app.id )));
@@ -96,7 +96,7 @@ function AdminUI() {
   useEffect(() => {
     const getAppl = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/getApplications", {
+        const res = await axios.get("https://cp-project-5ths.onrender.com/getApplications", {
           params: { accept: 2 }
         });
 
@@ -126,7 +126,7 @@ function AdminUI() {
 
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/getAdmin");
+        const response = await axios.get("https://cp-project-5ths.onrender.com/getAdmin");
         console.log('Response:', response.data);
         setTotalRooms(response.data.data);
       } catch (err) {
@@ -137,7 +137,7 @@ function AdminUI() {
 
     const AllData = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/getStud");
+        const response = await axios.get("https://cp-project-5ths.onrender.com/getStud");
         console.log('Response:', response.data);
         setTotalStudents(response.data.data);
       } catch (err) {

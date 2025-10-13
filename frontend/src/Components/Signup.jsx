@@ -20,7 +20,7 @@ function Signup() {
     const signupinfo = { name, email, password}; 
 
     try {
-      const url = "http://localhost:5000/auth/signup";
+      const url = "https://cp-project-5ths.onrender.com/auth/signup";
       const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
