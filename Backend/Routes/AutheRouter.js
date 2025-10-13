@@ -1,4 +1,4 @@
-const { signup,login } = require('../Controllers/AuthCOntroller');
+const { signup,login } = require('../Controllers/AuthController');
 const { signupValidation ,loginValidation} = require('../Middlewares/AuthValidation');
 const auth = require('../Middlewares/Auth');
 const {saveForm,getAdmin,saveData,StoreNotification} = require('../Controllers/Fetch');
