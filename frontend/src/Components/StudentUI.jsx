@@ -56,7 +56,7 @@ function StudentUI() {
     useEffect(()=>{
 
         const fetchApplication = async() =>{
-        const res = await axios.get("http://localhost:5000/getApplicationsEmail", {
+        const res = await axios.get("https://cp-project-5ths.onrender.com/getApplicationsEmail", {
            params: { accept:1,email:email}
          });
 
@@ -70,7 +70,7 @@ function StudentUI() {
       }
       else
       {
-        const res = await axios.get('http://localhost:5000/Student',{params: { email }});
+        const res = await axios.get('https://cp-project-5ths.onrender.com/Student',{params: { email }});
         setStudentInfo({name:res.data.data.s_name,department:res.data.data.department,room:res.data.data.r_no,application:res.data.data.application,status:'Active'})
       }
         }
