@@ -2,7 +2,7 @@ const { signup,login } = require('../Controllers/AuthCOntroller');
 const { signupValidation ,loginValidation} = require('../Middlewares/AuthValidation');
 const auth = require('../Middlewares/Auth');
 const {saveForm,getAdmin,saveData,StoreNotification} = require('../Controllers/Fetch');
-const {StoreApplication} = require('../Controllers/Storing');
+const {StoreApplication,StoreQR} = require('../Controllers/Storing');
 const {updateApplication} = require('../Controllers/DataOperation');
 
 
@@ -15,5 +15,7 @@ router.post('/saveData',saveData);//Rooms
 router.post('/storeNotification',StoreNotification);
 router.post('/storeApplication',StoreApplication);
 router.post('/updateApplication',updateApplication);
+
+router.post('/storeQR',StoreQR);
 
 module.exports = router;

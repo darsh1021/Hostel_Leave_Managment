@@ -11,9 +11,7 @@ const MentorUI = () => {
     app.accept = 1;
     setSelectedApp(null)
     setApplications((prevApps) => prevApps.filter((a) => a._id !== app._id));
-   await axios.post("http://localhost:5000/auth/updateApplication",app);
-   
-    
+   await axios.post("http://localhost:5000/auth/updateApplication",app); 
   };
 
   const handleReject = (app) => {

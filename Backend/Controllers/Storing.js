@@ -22,4 +22,36 @@ const StoreApplication =async(req,res)=>{
    }
 }
 
-module.exports = {StoreApplication};
+const StoreQR = async (req, res) => {
+  try {
+    const { Student_Name, Room_no, Student_Email, start_date, end_date } = req.body;
+
+    if (!Student_Name || !Room_no || !Student_Email || !start_date || !end_date) {
+      return res.status(400).json({ success: false, message: "All fields are required" });
+    }
+
+    // Create new QR entry
+    const qrData = await QRModel.create({
+      Student_Name,
+      Room_no,
+      Student_Email,
+      start_date,
+      end_date
+    });
+
+    console.log("QR data stored:", qrData);
+
+    res.status(201).json({
+      success: true,
+      message: "QR data stored successfully (auto-deletes after 2h)",
+      data: qrData
+    });
+  } catch (error) {
+    console.error("Error storing QR data:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+};
+
+
+
+module.exports = {StoreApplication,StoreQR};
