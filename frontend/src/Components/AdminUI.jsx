@@ -30,7 +30,7 @@ function AdminUI() {
 
   try {
     console.log(data);
-    const res = await axios.post("http://localhost:5000/auth/storeQR", data);
+    const res = await axios.post("https://cp-project-5ths.onrender.com/auth/storeQR", data);
     handleSuccess("QR data stored successfully!");
   } catch (err) {
     console.error(err);

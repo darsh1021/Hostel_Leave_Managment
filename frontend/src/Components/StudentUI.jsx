@@ -92,7 +92,7 @@ function StudentUI() {
 
      const getQr =async ()=>{
         console.log("Fuction called");
-        const res = await axios.get("http://localhost:5000/getQr",{params: { email }});
+        const res = await axios.get("https://cp-project-5ths.onrender.com/getQr",{params: { email }});
          
         const qrArray = res.data.data;
 
