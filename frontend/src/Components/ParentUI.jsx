@@ -34,7 +34,7 @@ function ParentUI() {
          
          console.log(res.data.data);
 
-         res.data.data.forEach((info,index)=>{const newApp ={id:info._id,type:info.ApplicationType+" [ Approved by Mentor ]",date:formatDate(info.start_Date),reason:info.reason,status:'Approved'};
+         res.data.data.forEach((info,index)=>{const newApp ={id:info._id,type:info.ApplicationType+" [ Approved by Mentor ]",date:formatDate(info.start_Date),reason:info.reason,status:'Approved',email:info.email};
          setpreviousApplications([...previousApplications, newApp])});
         }
 
@@ -72,13 +72,19 @@ function ParentUI() {
      app._id= app.id;
      setSelectedApp(null)
     setpreviousApplications((prevApps) => prevApps.filter((a) => a._id !== app._id));
- 
+     
+    //console.log("parent send this data : "+app.email);
     return await axios.post("https://cp-project-5ths.onrender.com/auth/updateApplication",app);
   };
 
-  const handleReject = (app) => {
+  const handleReject = async(app) => {
     console.log("Rejected:", app);
+    app.accept = 5;
+    app._id= app.id;
     setSelectedApp(null);
+    setpreviousApplications((prevApps) => prevApps.filter((a) => a._id !== app._id));
+    return await axios.post("https://cp-project-5ths.onrender.com/auth/updateApplication",app);
+  
   };
     const activityData = [
         { date: '2024-01-20', status: 'checked_in', time: '08:30 AM', location: 'Hostel A-105' },

@@ -14,9 +14,12 @@ const MentorUI = () => {
    await axios.post("https://cp-project-5ths.onrender.com/auth/updateApplication",app); 
   };
 
-  const handleReject = (app) => {
+  const handleReject = async(app) => {
     console.log("Rejected:", app);
     setSelectedApp(null);
+    app.accept = 5;
+    setApplications((prevApps) => prevApps.filter((a) => a._id !== app._id));
+     await axios.post("https://cp-project-5ths.onrender.com/auth/updateApplication",app); 
   };
 
   const [selectedApp, setSelectedApp] = useState(null);

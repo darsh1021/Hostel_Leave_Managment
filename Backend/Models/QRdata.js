@@ -10,16 +10,16 @@ const QR = new mongoose.Schema({
         type:String,
         required:true
     },
-    Student_Email:{
+    smail:{
         type:String,
         required:true
     },
     start_date:{
-        type:Date,
+        type:String,
         required:true
     },
     end_date:{
-        type:Date,
+        type:String,
         required:true
     },
     createdAt:{

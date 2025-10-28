@@ -155,22 +155,6 @@ function Login() {
                     <input type="password" placeholder="Password" onChange={(e) => { setPass(e.target.value) }} />
                     <input type="submit" onClick={submit} value="Login" />
 
-                    
-                    {/* Demo Access Links */}
-                    <div className="demo-access">
-                        <h3>Demo Access</h3>
-                        <div className="demo-buttons">
-                            <button type="button" onClick={() => navigate('/admin-ui')} className="demo-btn admin">
-                                👨‍💼 Admin Demo
-                            </button>
-                            <button type="button" onClick={() => navigate('/student-ui')} className="demo-btn student">
-                                👨‍🎓 Student Demo
-                            </button>
-                            <button type="button" onClick={() => navigate('/parent-ui')} className="demo-btn parent">
-                                👨‍👩‍👧‍👦 Parent Demo
-                            </button>
-                        </div>
-                    </div>
                 </form>
 
                 {/* Check-in Section */}

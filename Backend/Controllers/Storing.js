@@ -1,4 +1,5 @@
 const Application = require("../Models/ApplicationModel");
+const QRModel = require("../Models/QRdata");
 
 const StoreApplication =async(req,res)=>{
     
@@ -24,21 +25,18 @@ const StoreApplication =async(req,res)=>{
 
 const StoreQR = async (req, res) => {
   try {
-    const { Student_Name, Room_no, Student_Email, start_date, end_date } = req.body;
-
-    if (!Student_Name || !Room_no || !Student_Email || !start_date || !end_date) {
-      return res.status(400).json({ success: false, message: "All fields are required" });
-    }
-
+    const { Student_Name, Room_no, smail, start_date, end_date } = req.body;
+    console.log("Qr data :"+ Student_Name, Room_no, smail, start_date, end_date);
     // Create new QR entry
-    const qrData = await QRModel.create({
+    const qrData = new QRModel({
       Student_Name,
       Room_no,
-      Student_Email,
+      smail,
       start_date,
       end_date
     });
-
+     
+    await qrData.save();
     console.log("QR data stored:", qrData);
 
     res.status(201).json({

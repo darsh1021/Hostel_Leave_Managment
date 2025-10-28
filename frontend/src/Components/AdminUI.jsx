@@ -23,14 +23,14 @@ function AdminUI() {
   const data = {
     Student_Name: selectedApp?.name,
     Room_no: selectedApp?.room,
-    Student_Email: selectedApp?.email,
-    start_date: new Date(),
-    end_date: new Date(Date.now() + 2 * 60 * 60 * 1000) // 2 hours from now
+    smail: selectedApp?.email,
+    start_date:selectedApp?.date,
+    end_date:selectedApp?.end_date,
   };
 
   try {
-    const res = await axios.post("https://cp-project-5ths.onrender.com/auth/storeQR", data);
-    console.log(res.data);
+    console.log(data);
+    const res = await axios.post("http://localhost:5000/auth/storeQR", data);
     handleSuccess("QR data stored successfully!");
   } catch (err) {
     console.error(err);
@@ -69,16 +69,15 @@ function AdminUI() {
       // prepare payload (preserve server shape; modify as needed)
       const payload = { ...app, accept: 3 };
 
-      // call backend first
-      await axios.post("https://cp-project-5ths.onrender.com/auth/updateApplication", payload);
-
       // remove from applications list if present (match by email/id)
       setApplications(prev => prev.filter(a => !( (a.email || a.s_email) === (app.email || app.s_email) || a._id === app._id || a.id === app.id )));
 
       // remove only the matched notification (keep everything else)
       setNotification(prevNotifs => prevNotifs.filter(n => !matches(n, app)));
 
+       sendQr();
       setSelectedApp(null);
+      await axios.post("https://cp-project-5ths.onrender.com/auth/updateApplication", payload);
 
       handleSuccess && handleSuccess("Application accepted.");
       console.log("Application accepted and matching notification removed.");
@@ -88,9 +87,13 @@ function AdminUI() {
     }
   };
 
-  const handleReject = (app) => {
+  const handleReject = async(app) => {
     console.log("Rejected:", app);
-    setSelectedApp(null);
+    const payload = { ...app, accept: 3 };
+     setApplications(prev => prev.filter(a => !( (a.email || a.s_email) === (app.email || app.s_email) || a._id === app._id || a.id === app.id )));
+     setSelectedApp(null);
+      await axios.post("https://cp-project-5ths.onrender.com/auth/updateApplication", payload);
+
   };
 
   useEffect(() => {
@@ -105,11 +108,12 @@ function AdminUI() {
         // Normalize each notification to contain: id, email (singular), and the other fields
         const newApps = (res.data.data || []).map(info => ({
           _id: info._id,
-          email: info.s_email,            // normalize field name to `email`
+          email: info.email,            // normalize field name to `email`
           name: info.StudentName,
           room: info.Room_no,
           type: info.ApplicationType + " [ Approved by Mentor --> Parents ]",
           date: formatDate(info.start_Date),
+          end_date:formatDate(info.end_date),
           reason: info.reason,
           status: 'Approved',
           urgent: false,
@@ -199,7 +203,7 @@ function AdminUI() {
       {/* Header */}
       <div className="admin-header">
         <div className="admin-title">
-          <h1>Admin Dashboard</h1>
+          <h1>Wardan Dashboard</h1>
           <p>Hostel Management System</p>
         </div>
         <div className="admin-profile">
@@ -209,7 +213,7 @@ function AdminUI() {
             </div>
             <div className="admin-details">
               <h3>Dr. Sudarshan Kumar</h3>
-              <p>Administrator</p>
+              <p>Wardan</p>
             </div>
           </div>
           <div className="admin-actions">
@@ -278,7 +282,7 @@ function AdminUI() {
                   </div>
 
                   <div className="notification-actions">
-                    <button className="action-btn view" onClick={() => { setSelectedApp(notification);sendQr()}}>View</button>
+                    <button className="action-btn view" onClick={() => { setSelectedApp(notification);console.log(notification)}}>View</button>
                     {notification.urgent && <button className="action-btn urgent">Urgent</button>}
                   </div>
                 </div>

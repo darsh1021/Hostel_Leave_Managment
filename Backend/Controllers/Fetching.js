@@ -1,4 +1,5 @@
 const Application = require('../Models/ApplicationModel');
+const QRModel = require('../Models/QRdata');
 
 const getApplications = async(req,res)=>{
  
@@ -27,4 +28,17 @@ const getApplicationsEmail = async(req,res)=>{
  
 }
 
-module.exports = {getApplications,getApplicationsEmail};
+const getQr = async(req,res) =>{
+    
+    const{email} = req.query;
+    console.log("request reached to get qr" + email);
+    const data =await QRModel.find({smail:email}).lean();
+    
+        console.log(data);
+    if(data)
+    {
+        res.json({sccess:true,data:data});
+    }
+}
+
+module.exports = {getApplications,getApplicationsEmail,getQr};

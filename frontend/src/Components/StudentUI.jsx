@@ -4,6 +4,8 @@ import axios from 'axios';
 import { ToastContainer } from 'react-toastify';
 import { handleSuccess ,handleError} from '../util';
 import { useNavigate } from 'react-router-dom';
+import QRCode from 'react-qr-code'; 
+
 function StudentUI() {
     
      const email =localStorage.getItem("email");
@@ -50,7 +52,7 @@ function StudentUI() {
 
      const formatDate = (dateStr) => {
     if (!dateStr) return "";
-    return new Date(dateStr).toLocaleDateString("en-GB"); // dd/mm/yyyy
+    return new Date(dateStr).toLocaleDateString("en-GB");
   };
 
     useEffect(()=>{
@@ -86,6 +88,22 @@ function StudentUI() {
         application:-1,
         status: 'Active'
     });
+     const [qrData , setQrData] = useState();
+
+     const getQr =async ()=>{
+        console.log("Fuction called");
+        const res = await axios.get("http://localhost:5000/getQr",{params: { email }});
+         
+        const qrArray = res.data.data;
+
+  if (qrArray && qrArray.length > 0) {
+    setQrData(qrArray);
+    handleSuccess("Permission Granted");
+  } else {
+    setQrData(null);
+    handleError("Permission not granted");
+  }
+     }
 
     const [previousApplications , setpreviousApplications] = useState([]);
 
@@ -149,10 +167,10 @@ function StudentUI() {
                     Apply
                 </button>
                 <button 
-                    className={activeTab === 'location' ? 'tab active' : 'tab'}
-                    onClick={() => setActiveTab('location')}
+                    className={activeTab === 'qr' ? 'tab active' : 'tab'}
+                    onClick={() => {setActiveTab('qr'); getQr()}}
                 >
-                    Location
+                    QR Code
                 </button>
             </div>
 
@@ -191,9 +209,9 @@ function StudentUI() {
                             <button className="action-btn primary"  onClick={() => setActiveTab('apply')}>
                                 📝 New Application
                             </button>
-                           {/* <button className="action-btn secondary">
-                                📍 Check-in
-                            </button>*/}
+                            <button className="action-btn secondary" onClick={() => {setActiveTab('qr'); getQr()}}>
+                                📱 View QR
+                            </button>
                             <button className="action-btn secondary">
                                 📞 Contact Warden
                             </button>
@@ -203,114 +221,107 @@ function StudentUI() {
 
                 {activeTab === 'apply' && (
                     <div className="apply-content">
-      <form className="application-form" onSubmit={handleSubmit}>
-        <h3>New Application</h3>
-
-        <div className="form-group">
-          <label>Application Type</label>
-          <select
-            name="applicationType"
-            value={formData.applicationType}
-            onChange={handleChange}
-          >
-            <option value="">-- Select --</option>
-            <option value="Leave Application">Leave Application</option>
-            <option value="Room Change Request">Room Change Request</option>
-            <option value="Maintenance Request">Maintenance Request</option>
-            <option value="Special Permission">Special Permission</option>
-          </select>
-        </div>
-
-        <div className="form-group">
-          <label>Start Date</label>
-          <input
-            type="date"
-            name="startDate"
-            value={formData.startDate}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className="form-group">
-          <label>End Date</label>
-          <input
-            type="date"
-            name="endDate"
-            value={formData.endDate}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className="form-group">
-          <label>Reason</label>
-          <textarea
-            name="reason"
-            placeholder="Please provide detailed reason..."
-            rows="4"
-            value={formData.reason}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div
-          className="form-group"
-          style={{ display: "flex", alignItems: "center", gap: "8px" }}
-        >
-          <input
-            type="radio"
-            name="urgent"
-            checked={formData.urgent}
-            onChange={handleChange}
-          />
-          <label>URGENT </label>
-        </div>
-
-        <div className="form-group">
-          <label>Supporting Documents</label>
-          <input
-            type="file"
-            name="documents"
-            multiple
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className="form-actions">
-          <button type="submit" className="submit-btn">
-            Submit Application
-          </button>
-          <button type="button" className="cancel-btn">
-            Cancel
-          </button>
-        </div>
-      </form>
-    </div>
-                )}
-
-                {activeTab === 'location' && (
-                    <div className="location-content">
-                        <div className="location-info">
-                            <h3>Current Location</h3>
-                            <div className="location-card">
-                                <div className="location-icon">📍</div>
-                                <div className="location-details">
-                                    <h4>Hostel Building A</h4>
-                                    <p>Room: {studentInfo.room}</p>
-                                    <p>Floor: Ground Floor</p>
-                                    <p>Last Updated: 2 hours ago</p>
-                                </div>
+                        {/* Existing form unchanged */}
+                        <form className="application-form" onSubmit={handleSubmit}>
+                            <h3>New Application</h3>
+                            <div className="form-group">
+                                <label>Application Type</label>
+                                <select
+                                    name="applicationType"
+                                    value={formData.applicationType}
+                                    onChange={handleChange}
+                                >
+                                    <option value="">-- Select --</option>
+                                    <option value="Leave Application">Leave Application</option>
+                                    <option value="Room Change Request">Room Change Request</option>
+                                    <option value="Maintenance Request">Maintenance Request</option>
+                                    <option value="Special Permission">Special Permission</option>
+                                </select>
                             </div>
-                        </div>
-                        <div className="location-actions">
-                            <button className="location-btn">
-                                📍 Update Location
-                            </button>
-                            <button className="location-btn">
-                                🗺️ View Map
-                            </button>
-                        </div>
+                            <div className="form-group">
+                                <label>Start Date</label>
+                                <input
+                                    type="date"
+                                    name="startDate"
+                                    value={formData.startDate}
+                                    onChange={handleChange}
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>End Date</label>
+                                <input
+                                    type="date"
+                                    name="endDate"
+                                    value={formData.endDate}
+                                    onChange={handleChange}
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>Reason</label>
+                                <textarea
+                                    name="reason"
+                                    placeholder="Please provide detailed reason..."
+                                    rows="4"
+                                    value={formData.reason}
+                                    onChange={handleChange}
+                                />
+                            </div>
+                            <div className="form-group" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                                <input
+                                    type="radio"
+                                    name="urgent"
+                                    checked={formData.urgent}
+                                    onChange={handleChange}
+                                />
+                                <label>URGENT </label>
+                            </div>
+                            <div className="form-group">
+                                <label>Supporting Documents</label>
+                                <input
+                                    type="file"
+                                    name="documents"
+                                    multiple
+                                    onChange={handleChange}
+                                />
+                            </div>
+                            <div className="form-actions">
+                                <button type="submit" className="submit-btn">
+                                    Submit Application
+                                </button>
+                                <button type="button" className="cancel-btn">
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 )}
+
+                {activeTab === 'qr' && (
+  <div className="qr-content">
+    <h3>Your Hostel QR Code</h3>
+
+    {qrData && (
+      <div className="qr-card">
+        <QRCode value={`HostelID:${studentInfo.room}-Email:${email}`} size={180} />
+        <h3>{studentInfo.name}</h3>
+        <h3>Room No: {studentInfo.room}</h3>
+        <p>Accepted at : {new Date(qrData[0].createdAt).toLocaleString()} <br></br><b>The QR will be disable after 2 hours from accepted time</b></p>
+        <p>Start Date: {qrData[0].start_date}</p>
+        <p>End Date: {qrData[0].end_date}</p>
+        
+
+      </div>
+    )}
+    {
+        qrData === null && 
+        <div className="qr-card">
+        <QRCode value={`Take the wardan permission before leave :${studentInfo.room}-Email:${email}`} size={180} />
+        <h2>Ask for Leave</h2>
+      </div>
+    }
+  </div>
+)}
+
             </div>
 
             {/* Previous Applications */}
