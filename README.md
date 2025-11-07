@@ -4,7 +4,7 @@ The motivation behind this project arises from the challenges faced in tradition
 With the growing dependence on mobile and web technologies in educational institutions, there is a clear opportunity to modernize hostel leave workflows through automation and digitization. A secure, efficient, and scalable solution not only saves time for students and staff but also ensures that every leave is well-documented, verified, and monitored in real time. This system is also environmentally friendly, reducing the use of paper and physical documentation.
 </p>
 
-<h2><b>Pain Points </b>/h2>
+<h2><b>Pain Points </b></h2>
 <p>
 <ul>
 <li>Lack of centralized tracking and real-time communication.</li>
