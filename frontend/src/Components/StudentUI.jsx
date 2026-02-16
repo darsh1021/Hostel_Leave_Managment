@@ -93,7 +93,6 @@ function StudentUI() {
      const getQr =async ()=>{
         console.log("Fuction called");
         const res = await axios.get("https://cp-project-5ths.onrender.com/getQr",{params: { email }});
-         
         const qrArray = res.data.data;
 
   if (qrArray && qrArray.length > 0) {
@@ -315,7 +314,6 @@ function StudentUI() {
     {
         qrData === null && 
         <div className="qr-card">
-        <QRCode value={`Take the wardan permission before leave :${studentInfo.room}-Email:${email}`} size={180} />
         <h2>Ask for Leave</h2>
       </div>
     }
