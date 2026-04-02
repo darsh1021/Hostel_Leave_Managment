@@ -19,7 +19,7 @@ With the growing dependence on mobile and web technologies in educational instit
 
   <B>Demo Login Details</B><br>
   Admin Login : darsh123@gamil.com<br>  Password:darsh123 </br>
-  Mentor Login : mentor@gmai.com<br>  Password:7588019557  </br>
+  Mentor Login : mentor@gmail.com<br>  Password:7588019557  </br>
   Student Login : darshansalunke27@gmail.com</br>  Password:7588019557</br>
   Parent Login : father@gamil.com</br>  Password:7588019557</br>  
 
