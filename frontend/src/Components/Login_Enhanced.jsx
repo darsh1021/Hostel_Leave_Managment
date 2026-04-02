@@ -1,288 +1,176 @@
-import { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import './login_enhanced.css';
 import { ToastContainer } from "react-toastify";
 import { handleError, handleSuccess } from "../util";
+import { Button } from "./UI/Button";
+import { Input } from "./UI/Input";
+import { Card, CardContent } from "./UI/Card";
+import { LogIn, ShieldCheck, ArrowRight } from "lucide-react";
 
 function Login() {
-    const navigate = useNavigate();
-    const [email, setEmail] = useState("");
-    const [password, setPass] = useState("");
-    const [showCheckIn, setShowCheckIn] = useState(false);
-    const [checkInData, setCheckInData] = useState({
-        studentId: '',
-        roomNumber: '',
-        purpose: '',
-        expectedReturn: ''
-    });
-    const [checkInHistory, setCheckInHistory] = useState([
-        {
-            id: 1,
-            studentId: 'E2023001',
-            studentName: 'Rajesh Kumar',
-            roomNumber: 'A-105',
-            checkInTime: '2024-01-20 08:30',
-            purpose: 'Leave for Home',
-            status: 'checked_out'
-        },
-        {
-            id: 2,
-            studentId: 'E2023002',
-            studentName: 'Priya Sharma',
-            roomNumber: 'B-210',
-            checkInTime: '2024-01-20 09:15',
-            purpose: 'Medical Checkup',
-            status: 'checked_out'
-        },
-        {
-            id: 3,
-            studentId: 'E2023003',
-            studentName: 'Amit Singh',
-            roomNumber: 'C-315',
-            checkInTime: '2024-01-20 10:00',
-            purpose: 'Library Study',
-            status: 'checked_in'
-        }
-    ]);
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-    const submit = async (e) => {
-        e.preventDefault();
-
-        if (!email || !password) {
-            return handleError("Fill the information properly");
-        }
-
-        const logininfo = { email, password };
-
-        try {
-            const url = "https://cp-project-5ths.onrender.com/auth/login";
-            const response = await fetch(url, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(logininfo)
-            });
-
-            const result = await response.json();
-            const { success, message, jwtToken, name, error, role } = result;
-
-            if (success) {
-                handleSuccess(message + " " + role);
-
-                localStorage.setItem('token', jwtToken);
-                localStorage.setItem('loggedInUser', name);
-                localStorage.setItem('userRole', role);
-                localStorage.setItem('email',email);
-                
-                console.log(email);
-                setTimeout(() => {
-                    console.log(typeof (role));
-                    if (role === 'user') {
-                        handleSuccess("Logged in as Student");
-                        navigate("/student-ui");
-                    }
-                    else if (role === 'admin') {
-                        handleSuccess("Logged in as Admin");
-                        navigate("/admin-ui");
-                    }
-                    else if (role === 'parent') {
-                        handleSuccess("Logged in as Parent");
-                        navigate("/parent-ui");
-                    }
-                    else if (role === 'mentor') {
-                        handleSuccess("Logged in as Mentor");
-                        navigate("/mentor-ui");
-                    }
-                    else {
-                        handleError("User not exist")
-                        navigate("/");
-                    }
-                }, 1000);
-            }
-            else if (error) {
-                const details = error?.details[0].message;
-                handleError(details);
-            }
-            else if (!success) {
-                handleError(message)
-            }
-
-        } catch (err) {
-            handleError("Network error: " + err);
-        }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!email || !password) {
+      return handleError("Please fill in all fields");
     }
 
-    const handleCheckIn = (e) => {
-        e.preventDefault();
-        // Add new check-in record
-        const newCheckIn = {
-            id: checkInHistory.length + 1,
-            studentId: checkInData.studentId,
-            studentName: 'Student Name', // In real app, fetch from database
-            roomNumber: checkInData.roomNumber,
-            checkInTime: new Date().toLocaleString(),
-            purpose: checkInData.purpose,
-            status: 'checked_out'
-        };
-        setCheckInHistory([newCheckIn, ...checkInHistory]);
-        
-        // Reset form
-        setCheckInData({
-            studentId: '',
-            roomNumber: '',
-            purpose: '',
-            expectedReturn: ''
-        });
-        
-        handleSuccess("Check-in recorded successfully!");
-    };
+    setIsLoading(true);
+    try {
+      const url = "https://cp-project-5ths.onrender.com/auth/login";
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+      });
 
-    const getStatusColor = (status) => {
-        return status === 'checked_in' ? '#10b981' : '#dc2626';
-    };
+      const result = await response.json();
+      const { success, message, jwtToken, name, error, role } = result;
 
-    const getStatusIcon = (status) => {
-        return status === 'checked_in' ? '🏠' : '🚪';
-    };
+      if (success) {
+        handleSuccess(message);
+        localStorage.setItem('token', jwtToken);
+        localStorage.setItem('loggedInUser', name);
+        localStorage.setItem('userRole', role);
+        localStorage.setItem('email', email);
 
-    return (
-        <div className="login">
-            <div className="login-container">
-                {/* Login Form */}
-                <form className="form_login">
-                    <h1>Hostel Management System</h1>
-                    <h2>Login</h2>
-                    <input type="email" placeholder="Email" onChange={(e) => { setEmail(e.target.value) }} />
-                    <input type="password" placeholder="Password" onChange={(e) => { setPass(e.target.value) }} />
-                    <input type="submit" onClick={submit} value="Login" />
+        setTimeout(() => {
+          const routes = {
+            user: "/student-ui",
+            admin: "/admin-ui",
+            parent: "/parent-ui",
+            mentor: "/mentor-ui"
+          };
+          navigate(routes[role] || "/");
+        }, 800);
+      } else if (error) {
+        handleError(error?.details[0]?.message || "Authentication failed");
+      } else {
+        handleError(message);
+      }
+    } catch (err) {
+      handleError("Network error. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-                </form>
-
-                {/* Check-in Section */}
-                <div className="checkin-section">
-                    <div className="checkin-header">
-                        <h2>Student Check-in System</h2>
-                        <button 
-                            className="toggle-checkin"
-                            onClick={() => setShowCheckIn(!showCheckIn)}
-                        >
-                            {showCheckIn ? 'Hide' : 'Show'} Check-in
-                        </button>
-                    </div>
-
-                    {showCheckIn && (
-                        <div className="checkin-content">
-                            {/* Quick Stats */}
-                            <div className="checkin-stats">
-                                <div className="stat-item">
-                                    <span className="stat-number">24</span>
-                                    <span className="stat-label">Students in Hostel</span>
-                                </div>
-                                <div className="stat-item">
-                                    <span className="stat-number">8</span>
-                                    <span className="stat-label">Checked Out Today</span>
-                                </div>
-                                <div className="stat-item">
-                                    <span className="stat-number">16</span>
-                                    <span className="stat-label">Expected Returns</span>
-                                </div>
-                            </div>
-
-                            {/* Check-in Form */}
-                            <form onSubmit={handleCheckIn} className="checkin-form">
-                                <h3>New Check-in/Check-out</h3>
-                                <div className="form-row">
-                                    <div className="form-group">
-                                        <label>Student ID</label>
-                                        <input
-                                            type="text"
-                                            value={checkInData.studentId}
-                                            onChange={(e) => setCheckInData({...checkInData, studentId: e.target.value})}
-                                            placeholder="E2023001"
-                                            required
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Room Number</label>
-                                        <input
-                                            type="text"
-                                            value={checkInData.roomNumber}
-                                            onChange={(e) => setCheckInData({...checkInData, roomNumber: e.target.value})}
-                                            placeholder="A-105"
-                                            required
-                                        />
-                                    </div>
-                                </div>
-                                
-                                <div className="form-group">
-                                    <label>Purpose</label>
-                                    <select
-                                        value={checkInData.purpose}
-                                        onChange={(e) => setCheckInData({...checkInData, purpose: e.target.value})}
-                                        required
-                                    >
-                                        <option value="">Select Purpose</option>
-                                        <option value="Leave for Home">Leave for Home</option>
-                                        <option value="Medical Checkup">Medical Checkup</option>
-                                        <option value="Library Study">Library Study</option>
-                                        <option value="Emergency">Emergency</option>
-                                        <option value="Other">Other</option>
-                                    </select>
-                                </div>
-                                
-                                <div className="form-group">
-                                    <label>Expected Return Time</label>
-                                    <input
-                                        type="datetime-local"
-                                        value={checkInData.expectedReturn}
-                                        onChange={(e) => setCheckInData({...checkInData, expectedReturn: e.target.value})}
-                                        required
-                                    />
-                                </div>
-                                
-                                <div className="form-actions">
-                                    <button type="submit" className="submit-btn">
-                                        📝 Record Check-out
-                                    </button>
-                                    <button type="button" className="checkin-btn">
-                                        🏠 Record Check-in
-                                    </button>
-                                </div>
-                            </form>
-
-                            {/* Recent Activity */}
-                            <div className="recent-activity">
-                                <h3>Recent Activity</h3>
-                                <div className="activity-list">
-                                    {checkInHistory.slice(0, 5).map((record) => (
-                                        <div key={record.id} className="activity-item">
-                                            <div className="activity-icon">
-                                                <span>{getStatusIcon(record.status)}</span>
-                                            </div>
-                                            <div className="activity-details">
-                                                <h4>{record.studentName}</h4>
-                                                <p>ID: {record.studentId} | Room: {record.roomNumber}</p>
-                                                <p>Purpose: {record.purpose}</p>
-                                                <span className="activity-time">{record.checkInTime}</span>
-                                            </div>
-                                            <div className="activity-status">
-                                                <span 
-                                                    className="status-badge"
-                                                    style={{ backgroundColor: getStatusColor(record.status) }}
-                                                >
-                                                    {record.status === 'checked_in' ? 'In Hostel' : 'Checked Out'}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    )}
-                </div>
+  return (
+    <div className="flex min-h-screen bg-white">
+      {/* Left: Form - 50% Split */}
+      <div className="flex flex-1 flex-col justify-center px-8 py-12 sm:px-16 lg:px-24 bg-white relative z-20">
+        <div className="mx-auto w-full max-w-md">
+          <div className="mb-12 flex items-center gap-3">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-2xl shadow-primary/30">
+              <ShieldCheck className="h-7 w-7" />
             </div>
-            <ToastContainer />
+            <h1 className="text-3xl font-black tracking-tighter text-slate-900 italic">HostelFlow</h1>
+          </div>
+
+          <div className="space-y-2 mb-8">
+            <h2 className="text-3xl font-bold tracking-tight">Welcome back</h2>
+            <p className="text-muted-foreground">
+              Enter your credentials to access your dashboard.
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-2">
+              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                Email Address
+              </label>
+              <Input
+                type="email"
+                placeholder="name@university.edu"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="bg-secondary/30 border-none h-11"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                  Password
+                </label>
+                <Link to="#" className="text-xs text-accent hover:underline">
+                  Forgot password?
+                </Link>
+              </div>
+              <Input
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="bg-secondary/30 border-none h-11"
+              />
+            </div>
+
+            <Button 
+                type="submit" 
+                className="w-full h-11 shadow-lg shadow-primary/20" 
+                disabled={isLoading}
+            >
+              {isLoading ? "Signing in..." : "Sign in"}
+            </Button>
+          </form>
+
+          <p className="mt-8 text-center text-sm text-muted-foreground">
+            Don&apos;t have an account?{" "}
+            <Link to="/Signup" className="font-semibold text-accent hover:underline">
+              Create account
+            </Link>
+          </p>
         </div>
-    );
+      </div>
+
+      {/* Right: Visual */}
+      <div className="relative hidden w-0 flex-1 lg:block">
+        <div className="absolute inset-0 bg-primary overflow-hidden">
+          {/* Subtle patterns/mesh gradient */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-20%,#4f46e5,transparent)] opacity-40"></div>
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_80%,#6366f1,transparent)] opacity-20"></div>
+          
+          <div className="relative z-10 flex h-full flex-col items-center justify-center p-12 text-white">
+            <div className="max-w-md text-center">
+              <h3 className="text-4xl font-bold mb-6 tracking-tight">Streamlining Student Life</h3>
+              <p className="text-lg text-white/80 leading-relaxed mb-12">
+                "Modern hostel management should be as seamless as the life of the students it serves."
+              </p>
+              
+              <div className="grid grid-cols-2 gap-4 text-left">
+                <Card className="bg-white/5 border-white/10 backdrop-blur-md">
+                  <CardContent className="p-4 pt-4">
+                    <p className="text-sm font-medium text-white/50 mb-1">Leaves</p>
+                    <p className="text-2xl font-bold">1,240+</p>
+                    <p className="text-[10px] text-emerald-400 mt-1">Processed this month</p>
+                  </CardContent>
+                </Card>
+                <Card className="bg-white/5 border-white/10 backdrop-blur-md">
+                  <CardContent className="p-4 pt-4">
+                    <p className="text-sm font-medium text-white/50 mb-1">Users</p>
+                    <p className="text-2xl font-bold">5,000+</p>
+                    <p className="text-[10px] text-emerald-400 mt-1">Active students</p>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          </div>
+          
+          {/* Decorative lines/circles */}
+          <div className="absolute top-1/4 -right-24 h-96 w-96 rounded-full bg-white/5 blur-3xl"></div>
+          <div className="absolute bottom-1/4 -left-24 h-80 w-80 rounded-full bg-indigo-500/10 blur-3xl"></div>
+        </div>
+      </div>
+      <ToastContainer />
+    </div>
+  );
 }
 
 export default Login;

@@ -1,4 +1,4 @@
-import './App.css';
+// App entry point
 import { Navigate,Routes,Route } from 'react-router-dom';
 import Signup from './Components/Signup';
 import "react-toastify/ReactToastify.css";
@@ -22,7 +22,6 @@ function App() {
       <Route path="/student-ui" element={<StudentUI/>}/>
       <Route path="/parent-ui" element={<ParentUI/>}/>
       <Route path="/Login" element={<Login_Enhanced/>}/>
-      <Route path="/parent-ui" element={<ParentUI/>}/>
       <Route path="/mentor-ui" element={<MentorUI/>}/>
       <Route path="/review" element={<ReviewModel/>}/>
     </Routes>
